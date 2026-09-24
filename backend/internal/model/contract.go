@@ -8,11 +8,24 @@ import (
 )
 
 // ContractStage is one payment milestone of a contract.
+//
+// Lifecycle:
+//
+//	pending -> in_progress -> submitted -> done
+//	                         submitted -> rejected -> submitted ...
+//
+// Payment for a stage is released only when Party A confirms it (done);
+// the next stage moves to in_progress at that moment.
 type ContractStage struct {
-	Name      string `json:"name"`
-	Amount    float64 `json:"amount"`
-	Status    string `json:"status"` // pending / in_progress / done
-	DueAt     string `json:"dueAt"`
+	Name         string     `json:"name"`
+	Amount       float64    `json:"amount"`
+	Status       string     `json:"status"` // pending / in_progress / submitted / rejected / done
+	DueAt        string     `json:"dueAt"`
+	Note         string     `json:"note,omitempty"`
+	RejectReason string     `json:"rejectReason,omitempty"`
+	SubmittedAt  *time.Time `json:"submittedAt,omitempty"`
+	ConfirmedAt  *time.Time `json:"confirmedAt,omitempty"`
+	RejectedAt   *time.Time `json:"rejectedAt,omitempty"`
 }
 
 // Contract is the signed agreement between requester and freelancer.
@@ -30,10 +43,10 @@ type Contract struct {
 	UpdatedAt     time.Time `json:"-"`
 
 	// Computed fields.
-	Stages    []ContractStage `gorm:"-" json:"stages"`
-	PartyA    *User           `gorm:"foreignKey:PartyAID" json:"partyA"`
-	PartyB    *User           `gorm:"foreignKey:PartyBID" json:"partyB"`
-	Requirement *Requirement  `gorm:"foreignKey:RequirementID" json:"requirement"`
+	Stages      []ContractStage `gorm:"-" json:"stages"`
+	PartyA      *User           `gorm:"foreignKey:PartyAID" json:"partyA"`
+	PartyB      *User           `gorm:"foreignKey:PartyBID" json:"partyB"`
+	Requirement *Requirement    `gorm:"foreignKey:RequirementID" json:"requirement"`
 }
 
 // BeforeSave serializes stages.

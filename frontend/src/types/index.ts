@@ -48,6 +48,11 @@ export interface ContractStage {
   amount: number;
   status: string;
   dueAt: string;
+  note?: string;
+  rejectReason?: string;
+  submittedAt?: string;
+  confirmedAt?: string;
+  rejectedAt?: string;
 }
 
 export interface Contract {

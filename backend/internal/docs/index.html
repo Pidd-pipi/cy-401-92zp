@@ -43,8 +43,10 @@
     <div class="card"><h2>合同 Contract</h2><table>
       <tr><td><span class="m GET">GET</span></td><td><code>/api/v1/contracts</code></td><td>我的合同</td></tr>
       <tr><td><span class="m GET">GET</span></td><td><code>/api/v1/contracts/:id</code></td><td>合同详情（含阶段）</td></tr>
-      <tr><td><span class="m POST">POST</span></td><td><code>/api/v1/contracts/:id/sign</code></td><td>签署确认</td></tr>
-      <tr><td><span class="m POST">POST</span></td><td><code>/api/v1/contracts/:id/complete</code></td><td>完成确认</td></tr>
+      <tr><td><span class="m POST">POST</span></td><td><code>/api/v1/contracts/:id/sign</code></td><td>签署确认（双方，签署后第一段开始）</td></tr>
+      <tr><td><span class="m POST">POST</span></td><td><code>/api/v1/contracts/:id/stages/submit</code></td><td>乙方提交当前阶段交付（body: stageIndex/note）</td></tr>
+      <tr><td><span class="m POST">POST</span></td><td><code>/api/v1/contracts/:id/stages/confirm</code></td><td>甲方确认当前阶段付款，下一段开始（body: stageIndex）</td></tr>
+      <tr><td><span class="m POST">POST</span></td><td><code>/api/v1/contracts/:id/stages/reject</code></td><td>甲方驳回当前阶段交付（body: stageIndex/reason）</td></tr>
     </table></div>
     <div class="card"><h2>其它</h2><table>
       <tr><td><span class="m GET">GET</span></td><td><code>/api/v1/dashboard</code></td><td>我的工作台</td></tr>

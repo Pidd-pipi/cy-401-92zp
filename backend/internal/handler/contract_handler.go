@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/gigmatch/gigmatch/internal/dto"
 	"github.com/gigmatch/gigmatch/internal/middleware"
 	"github.com/gigmatch/gigmatch/internal/service"
 	"github.com/gigmatch/gigmatch/internal/util"
@@ -61,14 +62,56 @@ func (h *ContractHandler) Sign(c *gin.Context) {
 	util.OK(c, contract)
 }
 
-// Complete handles POST /contracts/:id/complete.
-func (h *ContractHandler) Complete(c *gin.Context) {
+// SubmitStage handles POST /contracts/:id/stages/submit.
+func (h *ContractHandler) SubmitStage(c *gin.Context) {
 	id, ok := parseUintParam(c, "id")
 	if !ok {
 		return
 	}
+	var req dto.SubmitStageRequest
+	if !util.BindAndValidate(c, &req) {
+		return
+	}
 	u := middleware.GetCurrentUser(c)
-	contract, err := h.svc.Complete(id, u.ID, u.Name)
+	contract, err := h.svc.SubmitStage(id, req, u.ID, u.Name)
+	if err != nil {
+		util.Fail(c, err)
+		return
+	}
+	util.OK(c, contract)
+}
+
+// ConfirmStage handles POST /contracts/:id/stages/confirm.
+func (h *ContractHandler) ConfirmStage(c *gin.Context) {
+	id, ok := parseUintParam(c, "id")
+	if !ok {
+		return
+	}
+	var req dto.ConfirmStageRequest
+	if !util.BindAndValidate(c, &req) {
+		return
+	}
+	u := middleware.GetCurrentUser(c)
+	contract, err := h.svc.ConfirmStage(id, req, u.ID, u.Name)
+	if err != nil {
+		util.Fail(c, err)
+		return
+	}
+	util.OK(c, contract)
+}
+
+// RejectStage handles POST /contracts/:id/stages/reject.
+func (h *ContractHandler) RejectStage(c *gin.Context) {
+	id, ok := parseUintParam(c, "id")
+	if !ok {
+		return
+	}
+	var req dto.RejectStageRequest
+	if !util.BindAndValidate(c, &req) {
+		return
+	}
+	u := middleware.GetCurrentUser(c)
+	contract, err := h.svc.RejectStage(id, req, u.ID, u.Name)
 	if err != nil {
 		util.Fail(c, err)
 		return

@@ -34,6 +34,15 @@ export enum UserRole {
   Admin = 'admin'
 }
 
+// 合同付款阶段状态（与后端 backend/internal/constants/contract_status.go 对齐）
+export enum StageStatus {
+  Pending = 'pending',
+  InProgress = 'in_progress',
+  Submitted = 'submitted',
+  Rejected = 'rejected',
+  Done = 'done'
+}
+
 export const RequirementStatusLabel: Record<string, string> = {
   draft: '草稿',
   open: '待报价',
@@ -64,4 +73,12 @@ export const RoleLabel: Record<string, string> = {
   freelancer: '自由职业者',
   both: '双角色',
   admin: '管理员'
+};
+
+export const StageStatusLabel: Record<string, string> = {
+  pending: '待启动',
+  in_progress: '交付中',
+  submitted: '待甲方确认',
+  rejected: '已驳回',
+  done: '已付款'
 };
