@@ -15,7 +15,9 @@
     "/api/v1/contracts": { "get": {} },
     "/api/v1/contracts/{id}": { "get": {} },
     "/api/v1/contracts/{id}/sign": { "post": {} },
-    "/api/v1/contracts/{id}/complete": { "post": {} },
+    "/api/v1/contracts/{id}/stages/{stageNo}/submit": { "post": {} },
+    "/api/v1/contracts/{id}/stages/{stageNo}/confirm": { "post": {} },
+    "/api/v1/contracts/{id}/stages/{stageNo}/reject": { "post": {} },
     "/api/v1/dashboard": { "get": {} },
     "/api/v1/operation-logs": { "get": {} },
     "/healthz": { "get": {} }

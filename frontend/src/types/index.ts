@@ -48,6 +48,9 @@ export interface ContractStage {
   amount: number;
   status: string;
   dueAt: string;
+  rejectReason?: string;
+  submittedAt?: string;
+  paidAt?: string;
 }
 
 export interface Contract {

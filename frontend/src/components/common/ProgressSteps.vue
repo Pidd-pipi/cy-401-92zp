@@ -1,6 +1,12 @@
 <template>
-  <el-steps :active="activeStep" align-center finish-status="success">
-    <el-step v-for="stage in stages" :key="stage.name" :title="stage.name" :description="`${formatCurrency(stage.amount)} · ${stage.dueAt}`" />
+  <el-steps :active="activeStep" align-center :finish-status="'success'">
+    <el-step
+      v-for="(stage, idx) in stages"
+      :key="stage.name"
+      :title="stage.name"
+      :status="stepStatus(idx)"
+      :description="`${formatCurrency(stage.amount)} · ${stage.dueAt}`"
+    />
   </el-steps>
 </template>
 
@@ -10,11 +16,18 @@ import type { ContractStage } from '../../types';
 import { formatCurrency } from '../../utils/formatCurrency';
 
 const props = defineProps<{ stages: ContractStage[] }>();
+
+// el-steps active index: the first stage that is not paid yet.
 const activeStep = computed(() => {
-  let done = 0;
-  for (const s of props.stages) {
-    if (s.status === 'done') done++;
-  }
-  return done;
+  const idx = props.stages.findIndex((s) => s.status !== 'paid' && s.status !== 'done');
+  return idx === -1 ? props.stages.length : idx;
 });
+
+function stepStatus(idx: number): 'wait' | 'process' | 'finish' | 'error' | 'success' {
+  const s = props.stages[idx]?.status;
+  if (s === 'paid' || s === 'done') return 'success';
+  if (s === 'rejected') return 'error';
+  if (s === 'submitted' || s === 'in_progress') return 'process';
+  return 'wait';
+}
 </script>

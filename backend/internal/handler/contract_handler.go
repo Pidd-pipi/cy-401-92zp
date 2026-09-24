@@ -5,6 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/gigmatch/gigmatch/internal/constants"
+	"github.com/gigmatch/gigmatch/internal/dto"
 	"github.com/gigmatch/gigmatch/internal/middleware"
 	"github.com/gigmatch/gigmatch/internal/service"
 	"github.com/gigmatch/gigmatch/internal/util"
@@ -61,17 +63,69 @@ func (h *ContractHandler) Sign(c *gin.Context) {
 	util.OK(c, contract)
 }
 
-// Complete handles POST /contracts/:id/complete.
-func (h *ContractHandler) Complete(c *gin.Context) {
-	id, ok := parseUintParam(c, "id")
+// SubmitStage handles POST /contracts/:id/stages/:stageNo/submit.
+func (h *ContractHandler) SubmitStage(c *gin.Context) {
+	id, stageNo, ok := parseContractStage(c)
 	if !ok {
 		return
 	}
 	u := middleware.GetCurrentUser(c)
-	contract, err := h.svc.Complete(id, u.ID, u.Name)
+	contract, err := h.svc.SubmitStage(id, stageNo, u.ID, u.Name)
 	if err != nil {
 		util.Fail(c, err)
 		return
 	}
 	util.OK(c, contract)
+}
+
+// ConfirmStage handles POST /contracts/:id/stages/:stageNo/confirm.
+func (h *ContractHandler) ConfirmStage(c *gin.Context) {
+	id, stageNo, ok := parseContractStage(c)
+	if !ok {
+		return
+	}
+	u := middleware.GetCurrentUser(c)
+	contract, err := h.svc.ConfirmStage(id, stageNo, u.ID, u.Name)
+	if err != nil {
+		util.Fail(c, err)
+		return
+	}
+	util.OK(c, contract)
+}
+
+// RejectStage handles POST /contracts/:id/stages/:stageNo/reject.
+func (h *ContractHandler) RejectStage(c *gin.Context) {
+	id, stageNo, ok := parseContractStage(c)
+	if !ok {
+		return
+	}
+	var req dto.RejectStageRequest
+	if !util.BindAndValidate(c, &req) {
+		return
+	}
+	u := middleware.GetCurrentUser(c)
+	contract, err := h.svc.RejectStage(id, stageNo, req.Reason, u.ID, u.Name)
+	if err != nil {
+		util.Fail(c, err)
+		return
+	}
+	util.OK(c, contract)
+}
+
+// parseContractStage extracts contract id and 1-based stage number.
+func parseContractStage(c *gin.Context) (uint, int, bool) {
+	id, ok := parseUintParam(c, "id")
+	if !ok {
+		return 0, 0, false
+	}
+	n, ok := parseUintParam(c, "stageNo")
+	if !ok || n < 1 {
+		util.Fail(c, invalidStageError())
+		return 0, 0, false
+	}
+	return id, int(n), true
+}
+
+func invalidStageError() error {
+	return constants.NewAppError(constants.CodeBadRequest, "无效的阶段编号")
 }

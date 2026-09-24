@@ -25,7 +25,7 @@ docker compose up -d --build
 - 需求大厅：瀑布流列表 + 预算/技能/状态多维筛选
 - 需求详情：完整信息 + 报价列表（需求方视角）+ 报价提交表单（自由职业者视角）
 - 我的工作台：分角色展示已发布需求、已报价项目、进行中合同
-- 合同详情：条款、阶段进度（分阶段付款进度条）、双方信息
+- 合同详情：条款、三段付款进度（乙方提交交付 → 甲方确认付款/驳回 → 下一段开始，末段确认后自动完成）、双方信息
 - 个人资料：展示/编辑个人信息、技能标签、历史项目
 - 横切：JWT 认证授权、操作日志、路由守卫、请求拦截器自动带 token
 
@@ -124,7 +124,10 @@ npm run dev
 | POST | /api/v1/bids/:id/withdraw | 撤回报价 |
 | GET | /api/v1/contracts | 我的合同 |
 | GET | /api/v1/contracts/:id | 合同详情 |
-| POST | /api/v1/contracts/:id/sign · /complete | 签署/完成 |
+| POST | /api/v1/contracts/:id/sign | 签署确认（首段开始） |
+| POST | /api/v1/contracts/:id/stages/:stageNo/submit | 乙方提交当前阶段交付 |
+| POST | /api/v1/contracts/:id/stages/:stageNo/confirm | 甲方确认阶段付款（下一段开始，末段完成合同） |
+| POST | /api/v1/contracts/:id/stages/:stageNo/reject | 甲方驳回阶段交付（body：reason） |
 | GET | /api/v1/dashboard | 我的工作台 |
 | GET/PATCH | /api/v1/users/:id | 个人资料 |
 | GET | /api/v1/operation-logs | 操作日志 |

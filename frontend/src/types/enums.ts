@@ -54,9 +54,27 @@ export const BidStatusLabel: Record<string, string> = {
 export const ContractStatusLabel: Record<string, string> = {
   pending_signature: '待签署',
   in_progress: '执行中',
-  pending_review: '待验收',
+  pending_review: '待确认付款',
   completed: '已完成',
   terminated: '已终止'
+};
+
+// 合同阶段状态（与后端 backend/internal/constants/contract_status.go 对齐）
+export enum ContractStageStatus {
+  Pending = 'pending',
+  InProgress = 'in_progress',
+  Submitted = 'submitted',
+  Rejected = 'rejected',
+  Paid = 'paid'
+}
+
+export const ContractStageStatusLabel: Record<string, string> = {
+  pending: '未开始',
+  in_progress: '进行中',
+  submitted: '待甲方确认',
+  rejected: '已驳回',
+  paid: '已付款',
+  done: '已付款'
 };
 
 export const RoleLabel: Record<string, string> = {
